@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Publications | OD3 Lab, UIC</title>
+<meta name="description" content="Publications, abstracts and patents from the OD3 Lab and Dr. Tejabhiram Yadavalli.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="assets/favicon.svg">
+</head>
+<body>
+<header class="site-header" id="site-header"></header>
+<main>
+<div class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Publications</span>
+    <h1>Papers, abstracts and patents</h1>
+    <p class="lede">OD3 Lab work is marked, with lab trainees <span style="text-decoration:underline;text-decoration-color:#d8892b;text-decoration-thickness:2px;text-underline-offset:3px">underlined</span>. For citation metrics see <a href="https://scholar.google.com/citations?user=M5iDh0UAAAAJ&hl=en">Google Scholar</a>.</p>
+  </div>
+</div>
+<section style="padding-top:40px">
+  <div class="wrap">
+    <div class="pub-tools">
+      <input id="q" type="search" placeholder="Search titles, authors or journals" aria-label="Search publications">
+      <div id="chips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    </div>
+    <p class="muted" id="count" style="font-size:.9rem"></p>
+    <div id="list"></div>
+  </div>
+</section>
+</main>
+<footer class="site-footer" id="site-footer"></footer>
+<script src="assets/site.js"></script>
+<script src="data/content.js"></script>
+<script>
+(function(){
+  var filters=[["all","All"],["lab","OD3 Lab"],["article","Articles"],["review","Reviews"],["abstract","Abstracts"],["patent","Patents"],["preprint","Preprints"]];
+  var cur="all", q=document.getElementById("q"), chips=document.getElementById("chips");
+  chips.innerHTML=filters.map(function(f){return '<button class="chip'+(f[0]==="all"?" on":"")+'" data-k="'+f[0]+'">'+f[1]+'</button>'}).join("");
+  chips.addEventListener("click",function(e){var b=e.target.closest(".chip");if(!b)return;cur=b.dataset.k;[].forEach.call(chips.children,function(c){c.classList.toggle("on",c===b)});render()});
+  q.addEventListener("input",render);
+  function render(){
+    var s=q.value.trim().toLowerCase();
+    var items=OD3.pubs.filter(function(p){
+      var kind = cur==="all" || p.k===cur || (cur==="article" && p.k==="chapter") || (cur==="lab" && p.k==="submitted");
+      return kind && (!s || (p.t+" "+p.a+" "+p.v).toLowerCase().indexOf(s)>-1);
+    });
+    document.getElementById("count").textContent=items.length+" items";
+    var html="",y=null;
+    items.forEach(function(p){
+      if(p.y!==y){y=p.y;html+='<div class="pub-year">'+y+'</div>'}
+      html+='<div class="pub"><div><div class="t">'+p.t+'</div><div class="a">'+OD3.mark(p.a)+'</div><div class="j">'+p.v+'</div></div><div class="k'+((p.k==="lab"||p.k==="submitted")?" lab":"")+'">'+OD3.kinds[p.k]+'</div></div>';
+    });
+    document.getElementById("list").innerHTML=html||'<p class="muted">No matches.</p>';
+  }
+  render();
+})();
+</script>
+</body>
+</html>

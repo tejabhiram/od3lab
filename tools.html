@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tools | qPCR Delta-Delta Ct Calculator | OD3 Lab</title>
+<meta name="description" content="Free qPCR relative expression calculator using the 2^-ddCt method, from the OD3 Lab at UIC.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="assets/favicon.svg">
+</head>
+<body>
+<header class="site-header" id="site-header"></header>
+<main>
+<div class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Tools</span>
+    <h1>qPCR fold change calculator</h1>
+    <p class="lede">Enter Ct values for your target and reference (housekeeping) gene. The calculator normalizes each sample to the reference gene, compares it to the mean of your control samples and reports fold change by the 2<sup>&minus;&Delta;&Delta;Ct</sup> method. Everything runs in your browser and nothing is uploaded.</p>
+  </div>
+</div>
+<section style="padding-top:40px">
+  <div class="wrap">
+    <div class="calc">
+      <div class="scroll-x"><table style="min-width:640px">
+        <thead><tr><th style="width:24%">Sample</th><th style="width:16%">Group</th><th>Target Ct</th><th>Reference Ct</th><th>&Delta;Ct</th><th>&Delta;&Delta;Ct</th><th>Fold change</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+      <div class="row-actions">
+        <button id="add">Add sample</button>
+        <button id="paste">Paste from spreadsheet</button>
+        <button id="csv" class="primary">Download CSV</button>
+        <button id="example">Load example</button>
+        <button id="clear">Clear</button>
+      </div>
+      <div id="pastebox" style="display:none;margin-top:14px"><textarea id="pastetxt" rows="6" style="width:100%;padding:10px;border:1px solid #e3e1db;border-radius:8px;font:inherit;font-size:.9rem" placeholder="Paste rows here: sample, group, target Ct, reference Ct"></textarea><div class="row-actions"><button id="pastego" class="primary">Use pasted rows</button></div></div>
+      <div class="summary" id="summary"></div>
+    </div>
+    <p class="muted" style="font-size:.88rem;margin-top:18px">The 2<sup>&minus;&Delta;&Delta;Ct</sup> method assumes near 100% amplification efficiency for both genes (Livak and Schmittgen, Methods 2001). Validate primer efficiency before relying on fold changes. To paste, copy four columns from Excel in the order sample, group (control or treated), target Ct, reference Ct.</p>
+  </div>
+</section>
+</main>
+<footer class="site-footer" id="site-footer"></footer>
+<script src="assets/site.js"></script>
+<script>
+(function(){
+  var tb=document.getElementById("rows");
+  function row(d){d=d||{};var tr=document.createElement("tr");
+    tr.innerHTML='<td><input value="'+(d.s||"")+'" placeholder="Sample"></td><td><select><option value="control">Control</option><option value="treated">Treated</option></select></td><td><input type="number" step="0.01" value="'+(d.t||"")+'"></td><td><input type="number" step="0.01" value="'+(d.r||"")+'"></td><td class="res"></td><td class="res"></td><td class="res"></td><td><button class="x" title="Remove">&times;</button></td>';
+    tr.querySelector("select").value=d.g||"treated";tb.appendChild(tr);}
+  function data(){return [].map.call(tb.rows,function(tr){var i=tr.querySelectorAll("input");return{tr:tr,s:i[0].value,g:tr.querySelector("select").value,t:parseFloat(i[1].value),r:parseFloat(i[2].value)}})}
+  function f(x,n){return isFinite(x)?x.toFixed(n):""}
+  function calc(){
+    var d=data();d.forEach(function(x){x.dct=x.t-x.r});
+    var c=d.filter(function(x){return x.g==="control"&&isFinite(x.dct)});
+    var cm=c.length?c.reduce(function(a,x){return a+x.dct},0)/c.length:NaN;
+    d.forEach(function(x){x.ddct=x.dct-cm;x.fc=Math.pow(2,-x.ddct);var td=x.tr.querySelectorAll(".res");td[0].textContent=f(x.dct,2);td[1].textContent=f(x.ddct,2);td[2].textContent=f(x.fc,3)});
+    function stats(g){var v=d.filter(function(x){return x.g===g&&isFinite(x.fc)}).map(function(x){return x.fc});if(!v.length)return null;var m=v.reduce(function(a,b){return a+b},0)/v.length;var sd=v.length>1?Math.sqrt(v.reduce(function(a,b){return a+(b-m)*(b-m)},0)/(v.length-1)):0;return{m:m,sem:sd/Math.sqrt(v.length),n:v.length}}
+    var s=document.getElementById("summary"),ct=stats("control"),tt=stats("treated");
+    s.innerHTML=(ct?'<div><span class="muted">Control mean fold change</span><b>'+f(ct.m,3)+'</b><span class="muted">SEM '+f(ct.sem,3)+', n = '+ct.n+'</span></div>':'')+(tt?'<div><span class="muted">Treated mean fold change</span><b>'+f(tt.m,3)+'</b><span class="muted">SEM '+f(tt.sem,3)+', n = '+tt.n+'</span></div>':'')+(isFinite(cm)?'<div><span class="muted">Control mean &Delta;Ct</span><b>'+f(cm,2)+'</b></div>':'<div><span class="muted">Add at least one control sample to compute &Delta;&Delta;Ct</span></div>');
+    return d;
+  }
+  tb.addEventListener("input",calc);tb.addEventListener("change",calc);
+  tb.addEventListener("click",function(e){if(e.target.classList.contains("x")){e.target.closest("tr").remove();calc()}});
+  document.getElementById("add").onclick=function(){row();calc()};
+  document.getElementById("clear").onclick=function(){tb.innerHTML="";row({g:"control"});row();calc()};
+  document.getElementById("example").onclick=function(){tb.innerHTML="";[["Mock 1","control",24.1,18.0],["Mock 2","control",24.4,18.2],["Mock 3","control",23.9,17.9],["Infected 1","treated",21.2,18.1],["Infected 2","treated",21.6,18.3],["Infected 3","treated",21.0,17.8]].forEach(function(a){row({s:a[0],g:a[1],t:a[2],r:a[3]})});calc()};
+  document.getElementById("paste").onclick=function(){var b=document.getElementById("pastebox");b.style.display=b.style.display==="none"?"block":"none"};
+  document.getElementById("pastego").onclick=function(){var t=document.getElementById("pastetxt").value;if(!t.trim())return;document.getElementById("pastebox").style.display="none";tb.innerHTML="";t.trim().split(/\r?\n/).forEach(function(l){var c=l.split(/\t|,/);row({s:c[0],g:/con|ctrl|mock/i.test(c[1]||"")?"control":"treated",t:c[2],r:c[3]})});calc()};
+  document.getElementById("csv").onclick=function(){var d=calc();var csv="Sample,Group,Target Ct,Reference Ct,dCt,ddCt,Fold change\n"+d.map(function(x){return[x.s,x.g,x.t,x.r,f(x.dct,3),f(x.ddct,3),f(x.fc,4)].join(",")}).join("\n");var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="ddct_results.csv";a.click()};
+  row({g:"control"});row({g:"control"});row();row();calc();
+})();
+</script>
+</body>
+</html>
