@@ -104,7 +104,7 @@ OD3.featured = [
 OD3.news = [
  {d:"2026-06",l:"June 2026",h:"Congratulations, Ratnesh",p:"Ratnesh Kumar completed his MS in Computer Science and has joined Google. He co-developed our host-transcriptome pathogen classification pipeline."},
  {d:"2026-05",l:"2026",h:"Six OD3 Lab abstracts at ARVO 2026",p:"Lab members presented work on O-GPT corneal microneedles, DECON corticosteroid delivery, dual-drug PLGA films, polymer-free dexamethasone microparticles, monocyte priming in HSV-1 keratitis and AI-driven host target discovery."},
- {d:"2026-01",l:"January 2026",h:"Bansari and Sherly join the lab",p:"Welcome to Bansari Patel and Sherly Fadel Makar, who joined the OD3 Lab in January 2026."},
+ {d:"2026-01",l:"January 2026",h:"Bansari and Sherly join the lab",p:"Welcome to Dr. Bansari Patel, MD, who joins as a research assistant, and Sherly Fadel Makar, who joined the OD3 Lab in January 2026."},
  {d:"2025-12",l:"December 2025",h:"Mannat moves on",p:"Undergraduate researcher Mannat Singh is preparing for medical school and continues research in the Shukla Lab. Thank you for her work on polymer-free steroid microparticles."},
  {d:"2025-11",l:"November 2025",h:"Neeraja starts a postdoc at Northwestern",p:"Dr. Neeraja Revi, our second postdoctoral fellow, has joined a lab at Northwestern University. We are proud of her and grateful for her DECON work."},
  {d:"2025-08",l:"August 2025",h:"UIC CCTS pilot award",p:"The lab received a UIC Center for Clinical and Translational Science pilot award to develop PLGA microspheres for sustained acyclovir and ganciclovir delivery in herpetic uveitis."},
