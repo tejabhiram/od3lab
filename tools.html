@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tools | qPCR Delta-Delta Ct Calculator | OD3 Lab</title>
+<title>Tools | OD3 Lab, UIC</title>
 <meta name="description" content="Free qPCR relative expression calculator using the 2^-ddCt method, from the OD3 Lab at UIC.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,9 +16,27 @@
 <div class="page-head">
   <div class="wrap">
     <span class="eyebrow">Tools</span>
-    <h1>qPCR fold change calculator</h1>
-    <p class="lede">Enter Ct values for your target and reference (housekeeping) gene. The calculator normalizes each sample to the reference gene, compares it to the mean of your control samples and reports fold change by the 2<sup>&minus;&Delta;&Delta;Ct</sup> method. Everything runs in your browser and nothing is uploaded.</p>
+    <h1>Free tools from the OD3 Lab</h1>
+    <p class="lede">Small, no-install tools we built for our own work and share with the community. Everything runs in your browser.</p>
+    <div class="grid-2" style="margin-top:28px">
+      <a class="card toolcard" href="atlas.html">
+        <span class="tag">New</span>
+        <h3>Host gene expression atlas</h3>
+        <p>See how any human gene responds to infection by ten pathogens, pooled across 76 public RNA-seq studies. Plots, study-level results and CSV downloads.</p>
+        <span class="link-arrow">Open the atlas</span>
+      </a>
+      <a class="card toolcard" href="#qpcr">
+        <span class="tag amber">qPCR</span>
+        <h3>qPCR fold change calculator</h3>
+        <p>Relative expression by the 2<sup>&minus;&Delta;&Delta;Ct</sup> method. Paste Ct values from Excel and download the results.</p>
+        <span class="link-arrow">Use the calculator</span>
+      </a>
+    </div>
   </div>
+</div>
+<div class="wrap" id="qpcr" style="padding-top:48px">
+  <h2>qPCR fold change calculator</h2>
+  <p class="lede">Enter Ct values for your target and reference (housekeeping) gene. The calculator normalizes each sample to the reference gene, compares it to the mean of your control samples and reports fold change by the 2<sup>&minus;&Delta;&Delta;Ct</sup> method. Everything runs in your browser and nothing is uploaded.</p>
 </div>
 <section style="padding-top:40px">
   <div class="wrap">

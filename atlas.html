@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Host Gene Expression Atlas | OD3 Lab, UIC</title>
+<meta name="description" content="Look up how any human gene responds to infection by ten ocular and systemic pathogens, across 76 public RNA-seq studies. Plots, study-level results and CSV downloads, no coding needed.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="assets/favicon.svg">
+</head>
+<body>
+<header class="site-header" id="site-header"></header>
+<main>
+<div class="page-head">
+  <div class="wrap">
+    <span class="eyebrow"><a href="tools.html" style="text-decoration:none">Tools</a> / Expression atlas</span>
+    <h1>Host gene expression atlas</h1>
+    <p class="lede">Type a human gene to see how it changes when cells are infected by each of <span id="pathogen-count">10</span> pathogens, pooled across <span id="study-count">76</span> public RNA-seq studies. <span id="gene-count">27,000+</span> genes, no coding needed.</p>
+    <p class="atlas-flag">Preliminary. Built from data in a manuscript currently under review. Please check back for the citation.</p>
+  </div>
+</div>
+
+<section style="padding-top:36px">
+  <div class="wrap">
+    <p id="loading" class="muted">Loading the atlas&hellip;</p>
+    <div id="tool" hidden>
+
+      <form id="gene-form" class="atlas-search" autocomplete="off">
+        <div class="ac">
+          <input id="gene-input" type="text" placeholder="Gene symbol, for example PCSK5" aria-label="Gene symbol" spellcheck="false" autocapitalize="characters">
+          <ul id="gene-list" class="ac-list" role="listbox" hidden></ul>
+        </div>
+        <button class="btn primary" type="submit">Show gene</button>
+      </form>
+      <p class="muted" style="font-size:.9rem;margin-top:10px">Try <button class="linkbtn" data-example="PCSK5">PCSK5</button>, <button class="linkbtn" data-example="IFIT1">IFIT1</button>, <button class="linkbtn" data-example="CXCL10">CXCL10</button> or <button class="linkbtn" data-example="IL6">IL6</button>.</p>
+      <p id="gene-msg" class="atlas-msg" hidden></p>
+
+      <div id="result" hidden>
+        <div class="atlas-card">
+          <div class="scroll-x"><svg id="violin" class="violin" role="img" aria-label="Violin plot of log2 fold change versus mock by pathogen"></svg></div>
+          <p id="result-note" class="muted small-note"></p>
+          <div class="btn-row">
+            <button class="chip" id="dl-samples">Download all samples (CSV)</button>
+            <button class="chip" id="dl-studies">Download study and pooled results (CSV)</button>
+            <button class="chip" id="dl-png">Figure (PNG)</button>
+            <button class="chip" id="dl-svg">Figure (SVG)</button>
+          </div>
+        </div>
+        <h2 class="atlas-h">Pooled result per pathogen</h2>
+        <div class="scroll-x" id="summary"></div>
+        <div id="detail" class="atlas-card" hidden></div>
+      </div>
+
+      <div class="atlas-compare">
+        <h2 class="atlas-h">Compare several genes</h2>
+        <p class="muted">Enter up to 30 genes, for example a pathway, separated by commas or spaces. The heatmap shows each gene's pooled log2 fold change for every pathogen.</p>
+        <form id="multi-form" class="atlas-search" autocomplete="off">
+          <div class="ac">
+            <input id="multi-input" type="text" placeholder="IFIT1, IFIT3, ISG15, MX1, OAS1" aria-label="Gene list" spellcheck="false">
+            <ul id="multi-list" class="ac-list" role="listbox" hidden></ul>
+          </div>
+          <button class="btn primary" type="submit">Compare</button>
+        </form>
+        <p id="multi-msg" class="atlas-msg" hidden></p>
+        <div id="multi-result" class="atlas-card" hidden>
+          <div class="scroll-x"><svg id="heatmap" class="heatmap" role="img" aria-label="Heatmap of pooled log2 fold change"></svg></div>
+          <div class="btn-row"><button class="chip" id="multi-csv">Download table (CSV)</button><button class="chip" id="multi-png">Heatmap (PNG)</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt tight">
+  <div class="wrap grid-2" style="align-items:start">
+    <div>
+      <span class="eyebrow">About this data</span>
+      <h2 style="font-size:1.6rem">How the numbers are made</h2>
+      <p>Public human RNA-seq studies with uninfected (mock) and infected samples were collected from NCBI SRA. Studies with more than one cell line were split so each cell line is compared only with its own mock samples. Reads were quantified with kallisto and summed to gene level.</p>
+      <p>Within each study, genes with very low expression were removed and infected samples were compared with mock samples using DESeq2, with correction for multiple testing (UP or DOWN at adjusted p &lt; 0.05, otherwise ns). Fold changes from all studies of the same pathogen were then pooled with a random-effects model, giving more weight to more reliable studies, and tested against no change, with Bonferroni correction across pathogens (stars).</p>
+      <p class="muted">Studies differ in cell type and infection conditions, so pooled values describe a general tendency rather than a single experiment.</p>
+    </div>
+    <div>
+      <span class="eyebrow">Reading the plot</span>
+      <h2 style="font-size:1.6rem">What you are looking at</h2>
+      <ul>
+        <li>Each dot is one infected sample, shown as log2 fold change against the mean of its own study's mock samples.</li>
+        <li>Violins show the spread of those samples. The thick line is the median and dashed lines are the quartiles.</li>
+        <li>Stars above each pathogen are the pooled test: * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001, **** p &lt; 0.0001. Significant pathogens are colored.</li>
+        <li>Click any pathogen to see every study behind it, with TPM values and each study's own DESeq2 result.</li>
+      </ul>
+      <p class="muted">Pathogens: <i>Pseudomonas aeruginosa</i>, <i>Mycobacterium tuberculosis</i>, <i>Candida albicans</i>, <i>Aspergillus fumigatus</i>, HSV-1, CMV, adenovirus, EBV, VZV and Zika virus.</p>
+      <p class="muted">Data and analysis by Maria Taher Plumber, OD3 Lab. Questions to <a href="mailto:yteja@uic.edu">yteja@uic.edu</a>.</p>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="site-footer" id="site-footer"></footer>
+<script src="assets/site.js"></script>
+<script src="assets/atlas.js"></script>
+</body>
+</html>

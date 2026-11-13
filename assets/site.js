@@ -1,7 +1,7 @@
 (function(){
   var LOGO='<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="none" stroke="#0c1b2a" stroke-width="1.6"/><circle cx="20" cy="20" r="11" fill="#0d6e78"/><circle cx="20" cy="20" r="4.6" fill="#0c1b2a"/><circle cx="23.6" cy="16.4" r="2" fill="#fff"/><path d="M20 1.5v5M20 33.5v5M1.5 20h5M33.5 20h5" stroke="#d8892b" stroke-width="1.6" stroke-linecap="round"/></svg>';
   var pages=[["index.html","Home"],["research.html","Research"],["people.html","People"],["publications.html","Publications"],["news.html","News"],["funding.html","Funding"],["tools.html","Tools"]];
-  var here=(location.pathname.split("/").pop()||"index.html");
+  var here=(location.pathname.split("/").pop()||"index.html");if(here==="atlas.html")here="tools.html";
   var nav=pages.map(function(p){return '<a href="'+p[0]+'"'+(p[0]===here?' class="active" aria-current="page"':'')+'>'+p[1]+'</a>'}).join("")+'<a href="join.html" class="cta'+(here==="join.html"?" active":"")+'">Join / Contact</a>';
   var h=document.getElementById("site-header");
   if(h){h.innerHTML='<div class="wrap"><a class="brand" href="index.html">'+LOGO+'<div><b>OD3 Lab</b><span>Ocular Drug Delivery &amp; Discovery</span></div></a><button class="menu-btn" aria-label="Menu" aria-expanded="false">Menu</button><nav class="nav">'+nav+'</nav></div>';
