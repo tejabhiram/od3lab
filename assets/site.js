@@ -9,3 +9,25 @@
   var f=document.getElementById("site-footer");
   if(f){f.innerHTML='<div class="wrap"><div class="cols"><div><h4>OD3 Lab</h4><p>Ocular Drug Delivery and Discovery Lab<br>Department of Ophthalmology and Visual Sciences<br>University of Illinois Chicago</p></div><div><h4>Visit</h4><p>909 S. Wolcott Ave, Room COMRB 1080<br>Chicago, IL 60612</p><p><a href="mailto:yteja@uic.edu">yteja@uic.edu</a></p></div><div><h4>Elsewhere</h4><p><a href="https://scholar.google.com/citations?user=M5iDh0UAAAAJ&hl=en">Google Scholar</a><br><a href="https://orcid.org/0000-0001-8584-2685">ORCID</a><br><a href="https://chicago.medicine.uic.edu/ophthalmology-visual-sciences/">UIC Ophthalmology</a><br><a href="join.html">Open positions</a></p></div></div><div class="base"><span>&copy; '+new Date().getFullYear()+' OD3 Lab, University of Illinois Chicago</span><span>Supported by the National Eye Institute</span></div></div>';}
 })();
+
+/* Play section videos while they are on screen, pause when scrolled away, resume on return.
+   A video the visitor paused by hand stays paused until they press play again. */
+(function(){
+  var vids=[].slice.call(document.querySelectorAll('video[data-autoplay]'));
+  if(!vids.length||!('IntersectionObserver' in window))return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  vids.forEach(function(v){
+    v.muted=true;v._auto=false;v._userPaused=false;
+    v.addEventListener('pause',function(){if(!v._auto&&!v.ended)v._userPaused=true;v._auto=false});
+    v.addEventListener('play',function(){v._userPaused=false});
+  });
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      var v=e.target;
+      if(e.isIntersecting&&e.intersectionRatio>=0.6){
+        if(!v._userPaused&&v.paused&&!v.ended){var p=v.play();if(p&&p.catch)p.catch(function(){})}
+      }else if(!v.paused){v._auto=true;v.pause()}
+    });
+  },{threshold:[0,0.6]});
+  vids.forEach(function(v){io.observe(v)});
+})();
