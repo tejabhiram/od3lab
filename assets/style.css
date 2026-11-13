@@ -204,3 +204,7 @@ section.tight{padding:56px 0}
 @media (max-width:900px){.pi-compact{grid-template-columns:1fr}.pi-compact img{max-width:260px}}
 .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .hero .eyebrow{overflow-wrap:anywhere}
+.video-fig{margin:6px 0 26px;max-width:820px}
+.video-fig video{width:100%;aspect-ratio:16/9;border-radius:var(--r);background:#0b1626;display:block;box-shadow:0 20px 40px -24px rgba(12,27,42,.5)}
+.video-fig figcaption{font-size:.86rem;color:var(--muted);margin-top:10px}
+#pi .video-fig{max-width:960px}
