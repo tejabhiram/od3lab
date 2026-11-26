@@ -102,6 +102,7 @@ OD3.featured = [
 
 /* date: YYYY-MM for sorting, label shown on page */
 OD3.news = [
+ {d:"2026-11",l:"November 2026",h:"Labsgiving",p:"The lab held its first Labsgiving. Everyone cooked a dish and brought it in to share, and we ate together around the conference table.",img:"img/labsgiving2026.jpg",alt:"OD3 Lab members around a table of shared home-cooked dishes at Labsgiving"},
  {d:"2026-06",l:"June 2026",h:"Congratulations, Ratnesh",p:"Ratnesh Kumar completed his MS in Computer Science and has joined Google. He co-developed our host-transcriptome pathogen classification pipeline."},
  {d:"2026-05",l:"2026",h:"Six OD3 Lab abstracts at ARVO 2026",p:"Lab members presented work on O-GPT corneal microneedles, DECON corticosteroid delivery, dual-drug PLGA films, polymer-free dexamethasone microparticles, monocyte priming in HSV-1 keratitis and AI-driven host target discovery."},
  {d:"2026-01",l:"January 2026",h:"Bansari and Sherly join the lab",p:"Welcome to Bansari Patel, MD, who joins as a research assistant, and Sherly Fadel Makar. Both joined the OD3 Lab in January 2026."},
@@ -131,5 +132,6 @@ OD3.mark = function(s){
 };
 OD3.fmtAuthors = OD3.mark;
 OD3.newsItem = function(n){
-  return '<li class="news-item"><time datetime="'+n.d+'">'+n.l+'</time><div><h3>'+n.h+'</h3><p>'+n.p+'</p></div></li>';
+  var fig = n.img ? '<figure class="news-fig"><img src="'+n.img+'" alt="'+(n.alt||n.h)+'" loading="lazy"></figure>' : '';
+  return '<li class="news-item"><time datetime="'+n.d+'">'+n.l+'</time><div><h3>'+n.h+'</h3><p>'+n.p+'</p>'+fig+'</div></li>';
 };
